@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { getBlog, getBlogById, updateBlog, postBlog, deleteBlog } from "../controllers/blogController.js";
+import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router.route('/blog')
     .get(getBlog)
-    .post(postBlog)
+    .post(authenticateUser, postBlog)
 
 router.route('/blog/:id')
     .get(getBlogById)

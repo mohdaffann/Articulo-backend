@@ -19,7 +19,8 @@ export const postBlog = async (req, res) => {
             blogName,
             title,
             description,
-            category
+            category,
+            user: req.user._id
         })
         res.status(200).json({ message: "Blog created successfully", blog })
     }

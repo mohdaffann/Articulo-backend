@@ -62,11 +62,16 @@ const loginUser = async (req, res) => {
 
         const token = user.generateAccessToken()
 
-
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // Only HTTPS in production
+            sameSite: "Strict", // Prevents CSRF attacks
+            maxAge: 24 * 60 * 60 * 1000 // 1 day expiry
+        })
 
         const currentUser = await User.findById(user._id).select("-password")
 
-        res.status(200).json({ token, currentUser })
+        res.status(200).json({ message: "login successful", currentUser })
 
     }
     catch (error) {
