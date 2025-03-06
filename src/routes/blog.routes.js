@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getBlog, getBlogById, updateBlog, postBlog, deleteBlog } from "../controllers/blogController.js";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
+import { accessToModify } from "../middlewares/updatedeleteaccess.middleware.js";
 
 const router = Router();
 
@@ -10,8 +11,8 @@ router.route('/blog')
 
 router.route('/blog/:id')
     .get(getBlogById)
-    .put(updateBlog)
-    .delete(deleteBlog)
+    .put(authenticateUser, accessToModify, updateBlog)
+    .delete(authenticateUser, accessToModify, deleteBlog)
 
 
 
