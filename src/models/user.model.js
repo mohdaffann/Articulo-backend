@@ -23,6 +23,9 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         lowercase: true
+    },
+    profile: {
+        type: String
     }
 },
     {
