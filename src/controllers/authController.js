@@ -6,6 +6,7 @@ const registerUser = async (req, res) => {
     try {
 
         const { userName, password, fullName, email, profile } = req.body;
+
         if ([userName, password, fullName, email].some(field => field?.trim() === '')) {
             return res.status(400).json({ message: "All the fields are required" })
         }
@@ -50,15 +51,13 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        let { userName, password, email } = req.body
+        let { password, email } = req.body
 
-        if ([userName, password, email].some(field => field?.trim() === ''))
+        if ([password, email].some(field => field?.trim() === ''))
             return res.status(401).json({ message: "All fields are required" })
 
 
-        const user = await User.findOne({
-            $and: [{ userName }, { email }]
-        })
+        const user = await User.findOne({ email })
         if (!user) return res.status(401).json({ message: "cannot find user" })
 
         const isMatch = await user.isPasswordCorrect(password)
@@ -75,6 +74,9 @@ const loginUser = async (req, res) => {
         })
 
         const currentUser = await User.findById(user._id).select("-password")
+
+
+
 
         res.status(200).json({ message: "login successful", currentUser })
 
@@ -136,5 +138,20 @@ const updateUser = async (req, res) => {
     }
 }
 
+const im = async (req, res) => {
+    try {
+        const user = req.user
+        if (!user) return res.status(401).json({ message: 'user not authenticated' })
+        res.status(200).json({
+            user
+        })
+        console.log(user);
 
-export { registerUser, loginUser, logoutUser, updateUser }
+    } catch (error) {
+        res.status(500).json({ message: 'internal server error ' })
+    }
+
+}
+
+
+export { registerUser, loginUser, logoutUser, updateUser, im }

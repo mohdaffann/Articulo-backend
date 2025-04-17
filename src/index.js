@@ -7,8 +7,9 @@ import express from "express";
 import mongoose from "mongoose";
 import blogRouter from './routes/blog.routes.js';
 import userRouter from './routes/user.routes.js';
-
+import cors from 'cors'
 import cookieParser from "cookie-parser";
+import { Follow } from "./models/follow.model.js";
 
 
 
@@ -18,16 +19,15 @@ app.use(express.json())
 
 
 async function connectDB() {
-    await mongoose.connect(
-        `${process.env.CONNECTION_INSTANCE}`
-    )
-        .then(() => {
-            console.log('mongodb connected successfully')
-
-        })
-        .catch((error) => {
-            console.log('error', error)
-        })
+    try {
+        await mongoose.connect(
+            `${process.env.CONNECTION_INSTANCE}`
+        )
+        console.log('mongodb connected successfully')
+        await Follow.syncIndexes();
+    } catch (error) {
+        console.log('mongo connect error', error)
+    }
 }
 
 cloudinary.config({
@@ -57,4 +57,4 @@ app.listen(4000, () => {
     console.log('listening on port 4000')
 })
 
-export { cloudinary }
+export { cloudinary } 
