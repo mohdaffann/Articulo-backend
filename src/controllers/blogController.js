@@ -2,7 +2,7 @@ import { Blog } from "../models/blog.model.js";
 
 export const getBlog = async (req, res) => {
     try {
-        const blogs = await Blog.find()
+        const blogs = await Blog.find().populate('user', '-password -email -fullName -createdAt -updatedAt')
         res.status(200).json({ message: "get created blogs", blogs })
     }
     catch (error) {
