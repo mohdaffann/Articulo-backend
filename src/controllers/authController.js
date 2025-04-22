@@ -5,7 +5,12 @@ import { uploadCloudinary } from "../utils/cloudinary.config.js";
 const registerUser = async (req, res) => {
     try {
 
-        const { userName, password, fullName, email, profile } = req.body;
+        console.log('request file', req.file);
+        console.log("request body", req.body);
+
+
+
+        const { userName, password, fullName, email } = req.body;
 
         if ([userName, password, fullName, email].some(field => field?.trim() === '')) {
             return res.status(400).json({ message: "All the fields are required" })
@@ -18,17 +23,27 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' })
         }
 
-        const filepath = req.file?.path
-        const result = filepath ? await uploadCloudinary(filepath) : { url: "" }
+        let profileUrl = '';
+        if (req.file) {
+            try {
+                const result = await uploadCloudinary(req.file.path);
+                if (result) {
+                    profileUrl = result.url;
+                    console.log('upload successful', profileUrl);
 
-
+                }
+            } catch (uploadError) {
+                console.error('upload failed', uploadError)
+                return res.status(500).json({ message: 'cloudinary file upload failed' })
+            }
+        }
 
         const user = new User({
             userName,
             fullName,
             email,
             password,
-            profile: result.url || ""
+            profile: profileUrl
         })
 
         await user.save()
@@ -37,9 +52,14 @@ const registerUser = async (req, res) => {
         const createdUser = await User.findById(user._id).select("-password")
 
         if (!createdUser) return res.status(401).json({ message: "User creation error" })
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000
+        })
 
         res.status(201).json({
-            token,
             createdUser
         })
 
