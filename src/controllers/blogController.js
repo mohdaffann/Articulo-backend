@@ -1,4 +1,7 @@
 import { Blog } from "../models/blog.model.js";
+import { uploadCloudinary } from "../utils/cloudinary.config.js";
+
+
 
 export const getBlog = async (req, res) => {
     try {
@@ -64,4 +67,44 @@ export const deleteBlog = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error deleting Blog", error });
     }
-} 
+}
+
+export const uploadImageEditorjs = async (req, res) => {
+    try {
+        console.log(' req file for editorjs image', req?.file);
+        if (!req.file) {
+            return res.status(400).json({
+                success: 0,
+                message: "No file uploaded (error in finding req.file)"
+            });
+        }
+        try {
+            const result = await uploadCloudinary(req.file.path);
+            console.log(result);
+
+            if (result && result.url) {
+                return res.status(200).json({
+                    success: 1,
+                    file: {
+                        url: result.secure_url,
+                    }
+                });
+            }
+        } catch (cloudError) {
+            console.log('Cloudinary upload error:', cloudError);
+
+            return res.status(500).json({
+                success: 0,
+                message: "Error uploading image to Cloudinary"
+            });
+        }
+
+    } catch (error) {
+        console.log('server error', error);
+        return res.status(500).json({
+            success: 0,
+            message: 'internal server error'
+        })
+
+    }
+}
