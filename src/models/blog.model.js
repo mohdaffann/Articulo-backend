@@ -2,23 +2,19 @@ import mongoose, { Schema, Types } from "mongoose";
 import { User } from "./user.model.js";
 
 const blogSchema = new Schema({
-    blogName: {
-        type: String,
-        required: true,
-    },
     title: {
         type: String,
         required: true,
 
     },
     description: {
-        type: String,
+        type: Object,
         required: true
     },
 
     category: {
         type: String,
-        required: true
+        required: false,
     },
 
     user: {

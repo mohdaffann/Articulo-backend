@@ -17,9 +17,9 @@ export const getBlog = async (req, res) => {
 export const postBlog = async (req, res) => {
     try {
 
-        const { blogName, title, description, category } = req.body;
+        const { title, description, category } = req.body;
         const blog = await Blog.create({
-            blogName,
+
             title,
             description,
             category,
