@@ -48,7 +48,7 @@ export const updateBlog = async (req, res) => {
 export const getBlogById = async (req, res) => {
 
     try {
-        const blogById = await Blog.findById(req.params.id)
+        const blogById = await Blog.findById(req.params.id).populate('user', '-password -email -fullName -createdAt -updatedAt')
         res.status(200).json({ message: "Blog by given ID found", blogById })
     }
 
