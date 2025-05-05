@@ -2,12 +2,11 @@ import dotenv from "dotenv";
 dotenv.config()
 
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import commentRouter from './routes/comments.routes.js'
 import express from "express";
 import mongoose from "mongoose";
 import blogRouter from './routes/blog.routes.js';
 import userRouter from './routes/user.routes.js';
-import cors from 'cors'
 import cookieParser from "cookie-parser";
 import { Follow } from "./models/follow.model.js";
 
@@ -49,7 +48,7 @@ connectDB();
 
 app.use('/api/v1', blogRouter);
 app.use('/api/v1/auth', userRouter);
-
+app.use('/api/v1', commentRouter)
 
 
 
