@@ -8,8 +8,6 @@ export const authenticateUser = async (req, res, next) => {
 
     try {
         const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        console.log('decoded token:', decode.profile);
-
         req.user = decode
         next()
     }

@@ -5,10 +5,6 @@ import { uploadCloudinary } from "../utils/cloudinary.config.js";
 const registerUser = async (req, res) => {
     try {
 
-        console.log('request file', req.file);
-        console.log("request body", req.body);
-
-
 
         const { userName, password, fullName, email } = req.body;
 
@@ -29,7 +25,7 @@ const registerUser = async (req, res) => {
                 const result = await uploadCloudinary(req.file.path);
                 if (result) {
                     profileUrl = result.url;
-                    console.log('upload successful', profileUrl);
+
 
                 }
             } catch (uploadError) {
@@ -165,7 +161,7 @@ const im = async (req, res) => {
         res.status(200).json({
             user
         })
-        console.log(user);
+
 
     } catch (error) {
         res.status(500).json({ message: 'internal server error ' })
