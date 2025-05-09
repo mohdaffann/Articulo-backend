@@ -4,7 +4,7 @@ import { authenticateUser } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.route('/blog/:id/comments')
+router.route('/blog/comments/:id')
     .post(authenticateUser, addComment)
     .get(getComments)
 
