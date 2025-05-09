@@ -24,7 +24,7 @@ export const addComment = async (req, res) => {
 }
 export const getComments = async (req, res) => {
     try {
-        const comments = await Comments.find({ blogId: req.params.id })
+        const comments = await Comments.find({ blogId: req.params.id }).populate('userId', '-password -email -fullName -createdAt -updatedAt')
         if (!comments) return res.status(400).json({ message: 'cannot find any comments', success: false })
         return res.status(200).json({ success: true, comments });
     } catch (error) {
