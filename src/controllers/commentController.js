@@ -36,7 +36,8 @@ export const getComments = async (req, res) => {
 }
 export const deleteComment = async (req, res) => {
     try {
-        await Comments.findByIdAndDelete(_id)
+
+        await Comments.findByIdAndDelete(req.params.id)
         return res.status(200).json({ success: true, message: 'comment Deleted' })
     } catch (error) {
         console.log('error in deleting comment', error);
@@ -46,9 +47,18 @@ export const deleteComment = async (req, res) => {
 
 export const updateComment = async (req, res) => {
     try {
-        const response = Comments.findOneAndUpdate(commentId, { text: newText });
+        console.log('req body', req.body);
+
+        const { id } = req.params;
+        console.log('id of comment:', id);
+
+        const { text } = req.body;
+
+        const response = await Comments.findOneAndUpdate({ _id: id }, { text: text }, { new: true })
         if (!response) return res.status(400).json({ message: 'cannot find id' })
-        return res.status(200).json({ message: 'success' }, response)
+        console.log('updated comment :', response);
+
+        return res.status(200).json({ message: 'success', updatedComment: response })
     } catch (error) {
         console.log('error in updating comments', error);
         return res.status(500).json({ message: 'internal server error' })
