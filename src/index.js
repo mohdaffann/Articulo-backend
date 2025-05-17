@@ -9,7 +9,7 @@ import blogRouter from './routes/blog.routes.js';
 import userRouter from './routes/user.routes.js';
 import cookieParser from "cookie-parser";
 import { Follow } from "./models/follow.model.js";
-
+import userProfileRouter from './routes/userProfile.routes.js'
 
 
 const app = express();
@@ -49,7 +49,7 @@ connectDB();
 app.use('/api/v1', blogRouter);
 app.use('/api/v1/auth', userRouter);
 app.use('/api/v1', commentRouter)
-
+app.use('/api/v1', userProfileRouter)
 
 
 app.listen(4000, () => {
