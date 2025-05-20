@@ -7,6 +7,7 @@ import express from "express";
 import mongoose from "mongoose";
 import blogRouter from './routes/blog.routes.js';
 import userRouter from './routes/user.routes.js';
+import followRouter from './routes/follow.routes.js'
 import cookieParser from "cookie-parser";
 import { Follow } from "./models/follow.model.js";
 import userProfileRouter from './routes/userProfile.routes.js'
@@ -50,6 +51,7 @@ app.use('/api/v1', blogRouter);
 app.use('/api/v1/auth', userRouter);
 app.use('/api/v1', commentRouter)
 app.use('/api/v1', userProfileRouter)
+app.use('/api/v1', followRouter)
 
 
 app.listen(4000, () => {
