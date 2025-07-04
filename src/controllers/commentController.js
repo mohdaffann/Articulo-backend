@@ -1,4 +1,5 @@
 import { Comments } from "../models/comment.model.js";
+import { Blog } from "../models/blog.model.js";
 
 export const addComment = async (req, res) => {
     try {
@@ -12,6 +13,7 @@ export const addComment = async (req, res) => {
         })
 
         await comment.save();
+        await Blog.findByIdAndUpdate({ _id: req.params.id }, { $inc: { commentCount: 1 } })
         return res.status(200).json({
             success: true,
             message: 'comment successfully added!',
@@ -36,9 +38,12 @@ export const getComments = async (req, res) => {
 }
 export const deleteComment = async (req, res) => {
     try {
-
+        const cmt = await Comments.findById(req.params.id);
+        const blogId = cmt.blogId;
         await Comments.findByIdAndDelete(req.params.id)
+        await Blog.findByIdAndUpdate({ _id: blogId }, { $inc: { commentCount: -1 } })
         return res.status(200).json({ success: true, message: 'comment Deleted' })
+
     } catch (error) {
         console.log('error in deleting comment', error);
         return res.status(500).json({ message: 'cant delete due to internal server error' })
