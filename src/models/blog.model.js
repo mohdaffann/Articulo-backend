@@ -5,7 +5,7 @@ const blogSchema = new Schema({
     title: {
         type: String,
         required: true,
-
+        index: true
     },
     description: {
         type: Object,
@@ -15,15 +15,22 @@ const blogSchema = new Schema({
     category: {
         type: String,
         required: false,
+        index: true
     },
 
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    commentCount: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true
 })
+
+blogSchema.index()
 
 export const Blog = mongoose.model("Blog", blogSchema)
