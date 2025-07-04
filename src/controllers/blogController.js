@@ -69,6 +69,20 @@ export const deleteBlog = async (req, res) => {
     }
 }
 
+export const searchBlog = async (req, res) => {
+    try {
+        const searchParams = req.query.q;
+        if (!searchParams || searchParams.trim() === '')
+            return res.status(400).json({ message: 'search is empty!' })
+        const blogs = await Blog.find({ title: { $regex: searchParams, $options: 'i' } }).select("-description -user")
+        return res.status(200).json({ message: 'success', blogs })
+    } catch (error) {
+        console.log('error occured in search blog', error);
+        return res.status(500).json({ message: 'error , try again!' })
+
+    }
+}
+
 export const uploadImageEditorjs = async (req, res) => {
     try {
         console.log(' req file for editorjs image', req?.file);
