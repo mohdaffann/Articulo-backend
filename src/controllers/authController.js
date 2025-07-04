@@ -123,6 +123,8 @@ const logoutUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { userName, email, password, fullName } = req.body;
+        console.log('req data inside update controller', req.body);
+
         const userId = req.user._id
         const user = await User.findById(userId)
         if (email && email.trim() === '') return res.status(400).json({ message: 'email cannot be empty' })
@@ -130,6 +132,9 @@ const updateUser = async (req, res) => {
         if (password && password.trim() === '') return res.status(400).json({ message: 'password cannot be empty' })
         if (fullName && fullName.trim() === '') return res.status(400).json({ message: 'fullname cannot be empty' })
 
+        if (email && email === user.email) {
+            return res.status(404).json({ message: 'Email cannot be the same!!' })
+        }
         if (email && email !== user.email) {
             const existEmail = await User.findOne({ email })
             if (existEmail) return res.status(400).json({ message: "Email already exists" })
@@ -144,8 +149,21 @@ const updateUser = async (req, res) => {
         if (fullName && fullName !== user.fullName) {
             user.fullName = fullName;
         }
+        if (req.file) {
+            try {
+                const result = await uploadCloudinary(req.file.path);
+                if (result) {
+                    user.profile = result.url;
+                }
+            } catch (error) {
+                console.log('error in uploading via cloudinary', error);
+                return res.status(500).json({ message: 'Cloudinary upload failed , Try Again!!' })
+
+            }
+        }
         await user.save()
         const updatedUser = await User.findById(userId).select('-password')
+
         res.status(200).json({ message: 'update successful', updatedUser })
 
     } catch (error) {
@@ -169,5 +187,17 @@ const im = async (req, res) => {
 
 }
 
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find().select('-password -createdAt -updatedAt -email -fullName');
+        return res.status(200).json({ message: 'Fetched all users successfully', users })
 
-export { registerUser, loginUser, logoutUser, updateUser, im }
+    } catch (error) {
+        console.log('error fetching all users', error);
+        return res.status(500).json({ message: 'internal server error' })
+
+    }
+}
+
+
+export { registerUser, loginUser, logoutUser, updateUser, im, getUsers }
