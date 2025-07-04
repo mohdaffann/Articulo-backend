@@ -44,7 +44,7 @@ export const getFollowingList = async (req, res) => {
 export const getFollowerList = async (req, res) => {
     try {
         const userId = req.params.id
-        console.log('inside followers controller', userId);
+
 
         if (!isValidObjectId(userId)) return res.status(400).json({ message: 'invlid id of user of whos following list yo want to view' })
         const followerList = await Follow.find({ following: userId }).populate("follower", 'userName profile')
@@ -53,5 +53,20 @@ export const getFollowerList = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'server error' })
     }
+}
+export const unfollowUser = async (req, res) => {
+    try {
+        const currentUser = req.user._id;
+        const userId = req.params.id;
+        const deleteFollow = await Follow.findOneAndDelete({ follower: currentUser, following: userId })
+        if (!deleteFollow) return res.status(404).json({ message: 'relationship not found' })
+        return res.status(200).json({ message: 'deleted successfully' })
+
+    } catch (error) {
+        console.log('error in unfollowing user', error);
+
+        return res.status(500).json({ message: 'internal server error' })
+    }
+
 }
 
