@@ -13,6 +13,14 @@ import { Follow } from "./models/follow.model.js";
 import userProfileRouter from './routes/userProfile.routes.js'
 import cors from 'cors';
 
+if (process.env.NODE_ENV === 'production') {
+    console.log = () => { };
+    console.error = () => { };
+    console.warn = () => { };
+    console.info = () => { };
+    console.debug = () => { };
+}
+
 
 const app = express();
 app.use(cookieParser())
