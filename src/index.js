@@ -11,11 +11,19 @@ import followRouter from './routes/follow.routes.js'
 import cookieParser from "cookie-parser";
 import { Follow } from "./models/follow.model.js";
 import userProfileRouter from './routes/userProfile.routes.js'
+import cors from 'cors';
 
 
 const app = express();
 app.use(cookieParser())
 app.use(express.json())
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://articulo.vercel.app'
+    ],
+    credentials: true
+}))
 
 
 async function connectDB() {
@@ -36,15 +44,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
 });
-/* mongoose.connection.once("open", async () => {
-   try {
-       await mongoose.connection.db.dropCollection("recipes");
-       console.log(" Collection 'recipes' dropped successfully");
-   } catch (error) {
-       console.error("⚠️ Error dropping collection:", error.message);
-   }
-});
-*/
+
 connectDB();
 
 app.use('/api/v1', blogRouter);
@@ -53,9 +53,9 @@ app.use('/api/v1', commentRouter)
 app.use('/api/v1', userProfileRouter)
 app.use('/api/v1', followRouter)
 
-
-app.listen(4000, () => {
-    console.log('listening on port 4000')
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+    console.log('listening on port ')
 })
 
 export { cloudinary } 
