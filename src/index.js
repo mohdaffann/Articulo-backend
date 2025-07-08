@@ -65,6 +65,11 @@ app.use('/api/v1', commentRouter)
 app.use('/api/v1', userProfileRouter)
 app.use('/api/v1', followRouter)
 
+app.get("/", (req, res) => {
+    res.status(200).send('server is active')
+
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log('listening on port ')
