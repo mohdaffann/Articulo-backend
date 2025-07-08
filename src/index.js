@@ -13,6 +13,17 @@ import { Follow } from "./models/follow.model.js";
 import userProfileRouter from './routes/userProfile.routes.js'
 import cors from 'cors';
 
+
+const app = express();
+
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://articulo.vercel.app'
+    ],
+    credentials: true
+}))
+
 if (process.env.NODE_ENV === 'production') {
     console.log = () => { };
     console.error = () => { };
@@ -22,16 +33,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-const app = express();
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://articulo.vercel.app'
-    ],
-    credentials: true
-}))
+
 
 
 async function connectDB() {
