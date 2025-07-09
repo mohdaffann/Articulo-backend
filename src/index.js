@@ -42,7 +42,7 @@ async function connectDB() {
             socketTimeoutMS: 45000,
             family: 4,
             bufferCommands: false,
-            bufferMaxEntries: 0
+
         }
         );
         console.log('mongodb connected successfully')
