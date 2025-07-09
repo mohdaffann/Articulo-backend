@@ -24,13 +24,6 @@ app.use(cors({
     credentials: true
 }))
 
-if (process.env.NODE_ENV === 'production') {
-    console.log = () => { };
-    console.error = () => { };
-    console.warn = () => { };
-    console.info = () => { };
-    console.debug = () => { };
-}
 
 
 app.use(cookieParser())
