@@ -41,7 +41,7 @@ app.use(express.json())
 async function connectDB() {
     try {
         await mongoose.connect(
-            process.env.CONNECTION_INSTANCE, {
+            `${process.env.CONNECTION_INSTANCE}`, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             maxPoolSize: 10,
@@ -101,7 +101,7 @@ app.get("/api/checkHealth", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log('listening on port ')
 })
 
