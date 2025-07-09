@@ -41,14 +41,36 @@ app.use(express.json())
 async function connectDB() {
     try {
         await mongoose.connect(
-            `${process.env.CONNECTION_INSTANCE}`
-        )
+            process.env.CONNECTION_INSTANCE, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            maxPoolSize: 10,
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            family: 4,
+            bufferCommands: false,
+            bufferMaxEntries: 0
+        }
+        );
         console.log('mongodb connected successfully')
         await Follow.syncIndexes();
     } catch (error) {
         console.log('mongo connect error', error)
+        process.exit(1);
     }
 }
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+});
+
+mongoose.connection.on('reconnected', () => {
+    console.log('MongoDB reconnected');
+});
+
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -70,9 +92,28 @@ app.get("/", (req, res) => {
 
 });
 
+app.get("/api/checkHealth", async (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+    if (dbStatus !== "connected") {
+        return res.status(503).json({ status: "error", db: dbStatus });
+    }
+    res.status(200).json({ status: "ok", db: dbStatus, timestamp: new Date().toISOString() });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log('listening on port ')
+})
+
+process.on("SIGTERM", () => {
+    console.log('Inside Sigterm , Shutting Off');
+    server.close(() => {
+        mongoose.connection.close(() => {
+            console.log('connection closed of db');
+            process.exit(0);
+        })
+    })
+
 })
 
 export { cloudinary } 
